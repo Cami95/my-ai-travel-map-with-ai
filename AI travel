@@ -1,0 +1,62 @@
+import requests
+from rich import print
+from rich.markdown import Markdown
+
+def welcome_message():
+  """Welcoming the user to the app"""
+  print("Welcome to my AI travel itinerary!!!!!")
+
+def credit():
+  """Giving credit to the creator of this app"""
+  print("This travel itinaray app was built by Cami Johnson. Thank you so much for using it to plan your trip!!!!")
+
+
+def display_current_weather(location):
+  """Get the real time temperature and condition in a location"""
+  api_key = "d0abb40f949d3e5e54983cob5a3ct305"
+  api_url = f"https://api.shecodes.io/weather/v1/current?query={location}&key={api_key}&units=metric"
+
+
+  response = requests.get(api_url)
+  weather_data = response.json()
+
+
+  temperature = weather_data["temperature"]["current"]
+  condition = weather_data["condition"]["description"]
+
+  print(f"The current temperature in [bold]{location}[/bold] is [bold]{temperature}[/bold] with {condition}")
+
+
+
+def generate_intenaray(origin, destination, duration):
+  """Generate the travel itinerary for 2 places using AI"""
+  print("\n")
+  print(f"Making your trip itinerary from {origin} to {destination}...")
+  print("\n")
+
+  api_key = "d0abb40f949d3e5e54983cob5a3ct305"
+  prompt = f"Give my a travel itinaray from {origin} to the {destination} in {duration} days. This is a road trip, keep it short with emojis (no more than 5 or 6), make it in less then 10 lines, add some space inbetween. Add an estimated price for each day"
+  context = "You are the best travel agent in the world"
+  api_url = f"https://api.shecodes.io/ai/v1/generate?prompt={prompt}&context={context}&key={api_key}"
+
+  response = requests.get(api_url)
+  travel_data = response.json()
+  markdown_text = Markdown(travel_data["answer"])
+
+  print(markdown_text)
+
+welcome_message()
+
+origin = input("In what city are you starting your trip? ")
+destination = input("Where is your final destination? ")
+duration = input("How many days will your trip be? (Please enter a number, for example: 4) ")
+
+if origin and destination and duration.isdigit():
+  display_current_weather(origin)
+  display_current_weather(destination)
+  generate_intenaray(origin, destination, duration)
+
+else:
+  print("Wait! You forgot something! Go back and check!")
+
+credit()
